@@ -1,4 +1,4 @@
-# LongChainKBQA
+# LangChain-ChatGLM
 
 # 执行流程
 
