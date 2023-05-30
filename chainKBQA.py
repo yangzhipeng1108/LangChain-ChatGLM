@@ -3,7 +3,7 @@ from langchain.prompts.prompt import PromptTemplate
 
 from config import Config
 from document import DocumentService
-from llm import LLMService
+from chatGlm import LLMService
 
 
 class LangChainApplication(object):
