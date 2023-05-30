@@ -1,0 +1,6 @@
+torch==1.13.1+cu117
+torchaudio==0.13.1+cu117
+torchvision==0.14.1+cu117
+faiss-gpu==1.7.2
+modelscope==1.5.2
+transformers==git@github.com:huggingface/transformers.git
