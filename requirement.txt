@@ -4,3 +4,10 @@ torchvision==0.14.1+cu117
 faiss-gpu==1.7.2
 modelscope==1.5.2
 transformers==git@github.com:huggingface/transformers.git
+protobuf
+cpm_kernels
+gradio
+mdtex2html
+sentencepiece
+accelerate
+langchain
