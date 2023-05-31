@@ -20,8 +20,8 @@ class LangChainApplication(object):
 
     def get_knowledge_based_answer(self, query,
                                    history_len=5,
-                                   temperature=0.1,
-                                   top_p=0.9,
+                                   temperature=0.95,
+                                   top_p=0.7,
                                    top_k=1,
                                    chat_history=[]):
         #定义prompt
