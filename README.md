@@ -2,7 +2,8 @@
 
 # 执行流程
 
-先运行 python document.py   再运行 python  chainGLM.py
+先训练知识库  运行 python document.py   
+再运行 python  chainGLM.py  实现推理
 
 # 网页Demo
 
