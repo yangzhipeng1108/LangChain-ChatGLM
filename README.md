@@ -2,8 +2,8 @@
 
 # 执行流程
 
-1、先训练知识库  运行 python document.py   
-2、再运行 python  chainGLM.py  实现推理
+1、将本地知识数据存入knowledge/txt目录下，运行 python document.py，生成本地知识库
+2、再运行 python  chainGLM.py  在chatglm-6b推理时，增加本地知识
 
 # 网页Demo
 
