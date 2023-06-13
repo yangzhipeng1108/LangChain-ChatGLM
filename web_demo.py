@@ -54,14 +54,10 @@ application = LangChainApplication()
 
 def predict(input, chatbot, max_length, top_p, temperature, history):
     chatbot.append((parse_text(input), ""))
-    if '你是谁' in input or 'who are you' in input:
-        chatbot[-1] = (parse_text(input), parse_text('我是一个基于LLM的人工智能助手,是上海有孚于 2023 年训练的语言模型开发的。我的任务是针对用户的问题和要求提供适当的答复和支持。'))
-    else:
 
+    result = application.get_knowledge_based_answer(input,top_p=top_p, temperature=temperature,chat_history = history)
 
-        result = application.get_knowledge_based_answer(input,top_p=top_p, temperature=temperature,chat_history = history)
-
-        chatbot[-1] = (parse_text(input), parse_text(result['result']))
+    chatbot[-1] = (parse_text(input), parse_text(result['result']))
 
     if len(history) == 0:
         history.append(chatbot[-1])
