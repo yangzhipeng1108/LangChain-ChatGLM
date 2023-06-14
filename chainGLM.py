@@ -115,28 +115,6 @@ if __name__ == '__main__':
 #     print("大模型+知识库后回答的结果")
 #     result = application.get_knowledge_based_answer('北京')
 #     print(result)
-
-#     print("大模型自己回答的结果")
-#     result = application.get_llm_answer('朱晓玥')
-#     print(result)
-#     print("大模型+知识库后回答的结果")
-#     result = application.get_knowledge_based_answer('朱晓玥')
-#     print(result)
-
-#     print("大模型自己回答的结果")
-#     result = application.get_llm_answer('杨幂的作品有什么')
-#     print(result)
-#     print("大模型+知识库后回答的结果")
-#     result = application.get_knowledge_based_answer('杨幂的作品有什么')
-#     print(result)
-
-#     print("大模型自己回答的结果")
-#     result = application.get_llm_answer('迪丽热巴的作品有什么')
-#     print(result)
-#     print("大模型+知识库后回答的结果")
-#     result = application.get_knowledge_based_answer('迪丽热巴的作品有什么')
-#     print(result)
-
     
     print("大模型自己回答的结果")
     result = application.get_llm_answer('2023年6月13号上海天气怎么样')
