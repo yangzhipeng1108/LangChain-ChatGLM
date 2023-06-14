@@ -73,8 +73,6 @@ class LangChainApplication(object):
             result_str = DeepSearch.search(query)
             text_splitter = AliTextSplitter()
             # 使用阿里的分段模型对文本进行分段
-            print(result_str)
-            print(type(result_str))
             split_text = text_splitter.split_text(result_str)
             # 采用embeding模型对文本进行向量化
             
