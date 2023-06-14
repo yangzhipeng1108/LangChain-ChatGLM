@@ -1,9 +1,27 @@
 from langchain.chains import RetrievalQA
 from langchain.prompts.prompt import PromptTemplate
+from langchain.vectorstores import FAISS
+from langchain.embeddings.huggingface import HuggingFaceEmbeddings
+
+from utils.AliTextSplitter import AliTextSplitter
 
 from config import Config
 from document import DocumentService
-from chatGLM import LLMService
+from llm import LLMService
+from custom_search import DeepSearch
+
+def get_related_content(related_docs):
+    related_content = []
+    for doc in related_docs:
+        related_content.append(doc.page_content)
+    return "\n".join(related_content)
+
+def get_docs_with_score(docs_with_score):
+    docs = []
+    for doc, score in docs_with_score:
+        doc.metadata["score"] = score
+        docs.append(doc)
+    return docs
 
 
 class LangChainApplication(object):
@@ -20,8 +38,8 @@ class LangChainApplication(object):
 
     def get_knowledge_based_answer(self, query,
                                    history_len=5,
-                                   temperature=0.95,
-                                   top_p=0.7,
+                                   temperature=0.1,
+                                   top_p=0.9,
                                    top_k=1,
                                    chat_history=[]):
         #定义prompt
@@ -37,12 +55,38 @@ class LangChainApplication(object):
 
         self.llm_service.temperature = temperature
         self.llm_service.top_p = top_p
-        # 声明一个知识库问答llm,传入之前初始化好的llm和向量知识搜索服务
-        knowledge_chain = RetrievalQA.from_llm(
-            llm=self.llm_service,
-            retriever=self.doc_service.vector_store.as_retriever(
-                search_kwargs={"k": top_k}),
-            prompt=prompt)
+
+
+        related_docs_with_score = self.doc_service.vector_store.similarity_search_with_score(query, k = top_k)
+        related_docs = get_docs_with_score(related_docs_with_score)
+        if related_docs[0].metadata["score"] > 500:
+
+
+            # 声明一个知识库问答llm,传入之前初始化好的llm和向量知识搜索服务
+            knowledge_chain = RetrievalQA.from_llm(
+                llm=self.llm_service,
+                retriever=self.doc_service.vector_store.as_retriever(
+                    search_kwargs={"k": top_k}),
+                prompt=prompt)
+
+        else:
+            result_str = DeepSearch.search(query)
+            text_splitter = AliTextSplitter()
+            # 使用阿里的分段模型对文本进行分段
+            print(result_str)
+            print(type(result_str))
+            split_text = text_splitter.split_text(result_str)
+            # 采用embeding模型对文本进行向量化
+            
+            vector_store = FAISS.from_texts(split_text, self.doc_service.embeddings)
+            vector_store.save_local("resource")
+
+            knowledge_chain = RetrievalQA.from_llm(
+                llm=self.llm_service,
+                retriever=vector_store.as_retriever(
+                    search_kwargs={"k": top_k}),
+                prompt=prompt)
+
 
         knowledge_chain.combine_documents_chain.document_prompt = PromptTemplate(
             input_variables=["page_content"], template="{page_content}")
@@ -50,6 +94,8 @@ class LangChainApplication(object):
 
         ### 基于知识库的问答
         result = knowledge_chain({"query": query})
+
+
         return result
 
     def get_llm_answer(self, query=''):
@@ -62,9 +108,39 @@ class LangChainApplication(object):
 
 if __name__ == '__main__':
     application = LangChainApplication()
+
+#     print("大模型自己回答的结果")
+#     result = application.get_llm_answer('北京')
+#     print(result)
+#     print("大模型+知识库后回答的结果")
+#     result = application.get_knowledge_based_answer('北京')
+#     print(result)
+
+#     print("大模型自己回答的结果")
+#     result = application.get_llm_answer('朱晓玥')
+#     print(result)
+#     print("大模型+知识库后回答的结果")
+#     result = application.get_knowledge_based_answer('朱晓玥')
+#     print(result)
+
+#     print("大模型自己回答的结果")
+#     result = application.get_llm_answer('杨幂的作品有什么')
+#     print(result)
+#     print("大模型+知识库后回答的结果")
+#     result = application.get_knowledge_based_answer('杨幂的作品有什么')
+#     print(result)
+
+#     print("大模型自己回答的结果")
+#     result = application.get_llm_answer('迪丽热巴的作品有什么')
+#     print(result)
+#     print("大模型+知识库后回答的结果")
+#     result = application.get_knowledge_based_answer('迪丽热巴的作品有什么')
+#     print(result)
+
+    
     print("大模型自己回答的结果")
-    result = application.get_llm_answer('迪丽热巴的作品有什么')
+    result = application.get_llm_answer('2023年6月13号上海天气怎么样')
     print(result)
     print("大模型+知识库后回答的结果")
-    result = application.get_knowledge_based_answer('迪丽热巴的作品有什么')
+    result = application.get_knowledge_based_answer('2023年6月13号上海天气怎么样')
     print(result)
