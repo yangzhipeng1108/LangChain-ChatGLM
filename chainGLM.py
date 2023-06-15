@@ -7,7 +7,7 @@ from utils.AliTextSplitter import AliTextSplitter
 
 from config import Config
 from document import DocumentService
-from llm import LLMService
+from chatGLM import LLMService
 from custom_search import DeepSearch
 
 def get_related_content(related_docs):
